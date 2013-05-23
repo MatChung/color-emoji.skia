@@ -190,7 +190,13 @@ void SkScalerContext_FreeType_Base::generateGlyphImage(FT_Face face, const SkGly
 
             if (face->glyph->bitmap.pixel_mode == FT_PIXEL_MODE_GRAY ||
                 (face->glyph->bitmap.pixel_mode == FT_PIXEL_MODE_MONO &&
-                 glyph.fMaskFormat == SkMask::kBW_Format)) {
+                 glyph.fMaskFormat == SkMask::kBW_Format)
+#ifdef FT_LOAD_COLOR
+                ||
+                (face->glyph->bitmap.pixel_mode == FT_PIXEL_MODE_BGRA &&
+                 glyph.fMaskFormat == SkMask::kARGB32_Format)
+#endif
+               ) {
                 unsigned    srcRowBytes = face->glyph->bitmap.pitch;
                 unsigned    dstRowBytes = glyph.rowBytes();
                 unsigned    minRowBytes = SkMin32(srcRowBytes, dstRowBytes);
